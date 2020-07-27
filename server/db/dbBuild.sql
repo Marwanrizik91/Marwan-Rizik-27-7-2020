@@ -6,19 +6,22 @@ DROP TABLE IF EXISTS messages CASCADE;
 
 CREATE TABLE users (
     id serial primary key,
-    "firstName" text,
-    "lastName" text,
-    "password" text,
-    "email" text
+    "firstName" text not null,
+    "lastName" text not null,
+    "password" text not null,
+    "email" text not null
 );
 
 CREATE TABLE messages (
     id serial primary key,
-    "senderId" INT,
-    "receiverId" INT,
+    "senderId" INT not null,
+    "receiverId" INT not null,
     title text,
     content text,
-    "creationDate" timestamp DEFAULT current_timestamp
+    "creationDate" timestamp DEFAULT current_timestamp,
+    "isRead" BOOLEAN DEFAULT FALSE,
+    "receiverDeleted" BOOLEAN DEFAULT FALSE,
+    "senderDeleted" BOOLEAN DEFAULT FALSE
 );
 
 INSERT INTO users ("firstName", "lastName", "password", "email") VALUES 

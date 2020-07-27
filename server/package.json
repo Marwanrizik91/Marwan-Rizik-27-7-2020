@@ -5,12 +5,14 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "NODE_ENV=test nodemon src/server.js"
+    "dev": "NODE_ENV=test nodemon src/server.js",
+    "test": "NODE_ENV=test nodemon src/modules/messages.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
     "bcrypt": "^5.0.0",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
