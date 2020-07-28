@@ -13,7 +13,8 @@ module.exports = (req, res, next) => {
     }
   
     res.locals.signedIn = true;
-    res.locals.userid = token.user;
+    res.locals.user = token.user;
+  
     next()
  
   })

@@ -13,7 +13,6 @@ const devDB = {
 
 const connection = process.env.NODE_ENV === 'test' ? devDB : prodDB;
 
-console.log(process.env.DEV_DB)
 
 const db = pgp(connection);
 module.exports = db;
