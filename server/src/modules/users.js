@@ -12,3 +12,5 @@ password = $4,
 email = $5
 WHERE id = $1` , [id, firstName, lastName, password, email]
 );
+
+exports.getUserByEmail = email => db.query(`SELECT * FROM users where username = $1`, email);
