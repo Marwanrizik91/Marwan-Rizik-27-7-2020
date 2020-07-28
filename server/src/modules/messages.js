@@ -25,9 +25,9 @@ exports.getSentMessages = userId =>
 exports.deleteMessage = async (messageId, userId) => {
     const [queryRes] = await db.query(`SELECT * from messages where id = $1`, [messageId])
     if(queryRes.senderId === +userId) {
-        await db.query(`UPDATE messages SET "senderDeleted" = true where id = $1 returning *`, [messageId])
+        await db.query(`UPDATE messages SET "senderDeleted" = true where id = $1`, [messageId])
     } else if(queryRes.receiverId === +userId){
-        await db.query(`UPDATE messages SET "receiverDeleted" = true where id = $1 returning *`, [messageId])
+        await db.query(`UPDATE messages SET "receiverDeleted" = true where id = $1`, [messageId])
     } else {
         throw new Error('No user exists with this id');
     }
