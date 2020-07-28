@@ -12,6 +12,7 @@ exports.addUser = async (req, res) => {
         email: req.body.email
     }
 
+    // check if the user exists in the DB
     try {
         const [userData] = await users.getUserByEmail(newUser.email);
         if (userData) {
@@ -22,7 +23,7 @@ exports.addUser = async (req, res) => {
     }
 
 
-
+    // hash the password and then add to DB
     bcrypt.hash(req.body.password, 10, (err, hash) => {
 
         newUser.password = hash;
@@ -38,6 +39,7 @@ exports.addUser = async (req, res) => {
             });
     });
 }
+
 exports.edit = (req, res) => {
     const userId = res.locals.user
 
@@ -64,13 +66,12 @@ exports.login = async (req, res) => {
 
     const [userData] = await users.getUserByEmail(email);
 
-
+    // check if there is a user with this credentials
     try {
-
         (!userData) ? res.status(404).json({ message: 'No user found' }) :
 
             bcrypt.compare(password, userData.password, (err, result) => {
-
+        // if both inputs are the same, continue and add cookie
                 if (result) {
                     const accessToken = generateAccessToken((userData.id).toString())
                     res.cookie('access_token', accessToken)

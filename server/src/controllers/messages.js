@@ -6,8 +6,8 @@ exports.getOneMessage = (req, res) => {
     const userId = res.locals.user
 
     messages.getMessageById(userId, messageId).then((message) => {
-        message.length < 1 ? res.status(404).json({ message: 'No message found' }) :
-            res.status(200).json(message)
+        message.length < 1 ? res.status(200).json({ message: 'You have 0 messages' }) :
+        res.status(200).json({ message, code: 200 })
     }).catch(err => {
         console.error(err)
         res.status(500).json({ error: err.message })
@@ -17,17 +17,20 @@ exports.getOneMessage = (req, res) => {
 exports.getReceivedMessages = (req, res) => {
     const userId = res.locals.user
     messages.getReceivedMessages(userId).then((messages) => {
-        res.status(200).json(messages)
+        res.status(200).json({ messages, code: 200 })
     }).catch(e => {
         console.error(e)
-        res.status(500).json({ message: e.message})
+        res.status(500).json({ message: e.message })
     })
 }
 
 exports.getSentMessages = (req, res) => {
     const userId = res.locals.user
     messages.getSentMessages(userId).then((messages) => {
-        res.status(200).json(messages)
+        res.status(200).json({ messages, code: 200 })
+    }).catch(e => {
+        console.error(e)
+        res.status(500).json({ message: e.message })
     })
 }
 
@@ -45,8 +48,8 @@ exports.addMessage = async (req, res) => {
         content: req.body.content
     }
 
-    messages.addMessage(message).then(() => {
-        res.status(200).json({ message: 'message added successfully' })
+    messages.addMessage(message).then((data) => {
+        res.status(200).json({ code: 200, data, message: 'message added successfully' })
     }).catch(e => {
         console.error(e)
         res.status(500).json({ error: e.message })
@@ -58,7 +61,7 @@ exports.addMessage = async (req, res) => {
 exports.deleteMessage = (req, res) => {
     const messageId = req.params.id
     const userId = res.locals.user
-    
+
     messages.deleteMessage(messageId, userId).then((data) => {
         res.status(200).json({ message: 'Deleted successfully' })
     }).catch(e => {
@@ -70,7 +73,7 @@ exports.deleteMessage = (req, res) => {
 exports.markAsRead = (req, res) => {
     const messageId = req.params.id
     messages.markAsRead(messageId).then((data) => {
-        res.status(200).json({ data,  message: 'Mark as read successfully' })
+        res.status(200).json({ data, message: 'Mark as read successfully' })
     }).catch(e => {
         console.error(e)
         res.status(500).json({ error: e.message })

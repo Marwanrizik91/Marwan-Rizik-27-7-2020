@@ -1,7 +1,7 @@
 const db = require('../../db/dbConnection');
 
 exports.addMessage = ({senderId, receiverId, title, content}) => {
-    return db.query('insert into messages ("senderId", "receiverId", title, content) values ($1, $2, $3, $4)',
+    return db.query('insert into messages ("senderId", "receiverId", title, content) values ($1, $2, $3, $4) returning *',
      [senderId, receiverId, title, content])
 }
 
@@ -14,12 +14,10 @@ exports.getMessageById = async (userId, messageId) => {
     }
 }
 
-exports.getReceivedMessages = userId => 
-     db.query('SELECT * FROM messages where "receiverId" = $1', [userId])
+exports.getReceivedMessages = userId => db.query('SELECT * FROM messages where "receiverId" = $1', [userId])
 
 
-exports.getSentMessages = userId => 
-     db.query('SELECT * FROM messages where "senderId" = $1', [userId])
+exports.getSentMessages = userId => db.query('SELECT * FROM messages where "senderId" = $1', [userId])
 
 
 exports.deleteMessage = async (messageId, userId) => {
