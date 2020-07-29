@@ -1,14 +1,23 @@
 const db = require('../../db/dbConnection');
 
-exports.add = ({firstName, lastName, password, email}) => db.query(`insert into users ("firstName", "lastName", "password", "email") VALUES ($1, $2, $3, $4) returning *`, 
-                [firstName, lastName, password, email])
+exports.add = async ({ firstName, lastName, password, email }) => {
+    const exists = await exports.getUserByEmail({ email })
+    if (exists) throw new Error('user already exists in the databse')
+
+    const queryRes = await db.query(`insert into users ("firstName", "lastName", "password", "email") VALUES ($1, $2, $3, $4) returning *`,
+        [firstName, lastName, password, email])
+
+    return queryRes;
+}
 
 
-exports.edit = ({id, firstName, lastName, password, email }) => db.query(
-    `UPDATE users
-SET firstName = $2,
-lastName = $3,
-password = $4,
-email = $5
-WHERE id = $1` , [id, firstName, lastName, password, email]
-);
+exports.edit = async ({ id, firstName, lastName }) => {
+    const queryRes = await db.query(
+            `UPDATE users
+    SET "firstName" = $2,
+    "lastName" = $3
+    WHERE id = $1 returning *` , [id, firstName, lastName])
+    return queryRes;
+}
+
+exports.getUserByEmail = email => db.query(`SELECT * FROM users where email = $1`, email);
