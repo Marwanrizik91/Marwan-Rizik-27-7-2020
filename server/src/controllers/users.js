@@ -1,6 +1,7 @@
 const users = require('../modules/users')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
+const { user } = require('./../validators/user.schema')
 
 
 exports.addUser = async (req, res) => {
@@ -12,32 +13,17 @@ exports.addUser = async (req, res) => {
         email: req.body.email
     }
 
-    // check if the user exists in the DB
+    // hash the password and then add to DB
+    // add to database
     try {
-        const [userData] = await users.getUserByEmail(newUser.email);
-        if (userData) {
-            return res.status(401).json({ message: 'user already exists in the database' })
-        }
+        newUser.password = await bcrypt.hash(req.body.password, 10)
+        const addedUser = await users.add(newUser)
+        res.status(200).json({ message: 'user added successfully', code: 200, data: addedUser })
     } catch ({ message }) {
-        return res.status(500).json({ message })
+        console.error(message)
+        return res.status(500).json({ error: message })
     }
 
-
-    // hash the password and then add to DB
-    bcrypt.hash(req.body.password, 10, (err, hash) => {
-
-        newUser.password = hash;
-
-        // add to database
-        users.add(newUser)
-            .then(() => {
-                res.status(200).json({ message: 'user added successfully', code: 200 })
-            })
-            .catch(err => {
-                console.error(err)
-                return res.status(500).json({ error: err.code })
-            });
-    });
 }
 
 exports.edit = (req, res) => {
@@ -47,7 +33,6 @@ exports.edit = (req, res) => {
         id: userId,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        email: req.body.email
     }
 
     users.edit(updatedDetails).then(() => {
@@ -64,28 +49,23 @@ exports.login = async (req, res) => {
     const email = req.body.email;
 
 
-    const [userData] = await users.getUserByEmail(email);
-
     // check if there is a user with this credentials
     try {
-        (!userData) ? res.status(404).json({ message: 'No user found' }) :
 
-            bcrypt.compare(password, userData.password, (err, result) => {
-        // if both inputs are the same, continue and add cookie
-                if (result) {
-                    const accessToken = generateAccessToken((userData.id).toString())
-                    res.cookie('access_token', accessToken)
-                    res.status(200).json({ user: userData, code: 200 })
-                    res.end()
+        const [userData] = await users.getUserByEmail(email);
+        if(!userData)
+            throw new Error('email not found')
+        const passwordsMatch = await bcrypt.compare(password, userData.password)
+        if (!passwordsMatch)
+            throw new Error('passwords do not match')
 
-                } else {
-                    res.status(404).json({ message: 'Your username or password seems to be incorrect' });
-                }
-            })
+        const accessToken = generateAccessToken((userData.id).toString())
+        res.cookie('access_token', accessToken)
+        res.json({ data: userData, message: 'Logged successfully'})
 
-    } catch {
+    } catch ({ message }) {
 
-        return res.status(500).json({ error: "Error Occurred" })
+        return res.status(500).json({ error: message })
 
     }
 

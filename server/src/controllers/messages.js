@@ -7,7 +7,7 @@ exports.getOneMessage = (req, res) => {
 
     messages.getMessageById(userId, messageId).then((message) => {
         message.length < 1 ? res.status(200).json({ message: 'You have 0 messages' }) :
-        res.status(200).json({ message, code: 200 })
+            res.status(200).json({ message, code: 200 })
     }).catch(err => {
         console.error(err)
         res.status(500).json({ error: err.message })
@@ -38,22 +38,26 @@ exports.addMessage = async (req, res) => {
 
 
     // get the receiver in order to add his id to the message
-    const [receiver] = await users.getUserByEmail(req.body.email)
+    try {
+        const [receiver] = await users.getUserByEmail(req.body.email)
+        if (!receiver) throw new Error('user not found')
 
-    const message = {
-        //gets the sender id from the locals(added when authed)
-        senderId: res.locals.user,
-        receiverId: receiver.id,
-        title: req.body.title,
-        content: req.body.content
+        const message = {
+            //gets the sender id from the locals(added when authed)
+            senderId: res.locals.user,
+            receiverId: receiver.id.toString(),
+            title: req.body.title,
+            content: req.body.content
+        }
+
+        const data = await messages.addMessage(message)
+        res.status(200).json({ code: 200, data, message: 'message added successfully' })
+
+    } catch ({ message }) {
+        res.status(500).json({ error: message })
     }
 
-    messages.addMessage(message).then((data) => {
-        res.status(200).json({ code: 200, data, message: 'message added successfully' })
-    }).catch(e => {
-        console.error(e)
-        res.status(500).json({ error: e.message })
-    })
+
 
 
 }
