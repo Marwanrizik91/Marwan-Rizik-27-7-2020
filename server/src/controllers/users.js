@@ -1,7 +1,6 @@
 const users = require('../modules/users')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
-const { user } = require('./../validators/user.schema')
 
 
 exports.addUser = async (req, res) => {
