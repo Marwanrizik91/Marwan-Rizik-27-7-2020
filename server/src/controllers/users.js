@@ -1,7 +1,7 @@
 const users = require('../modules/users')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
-
+const { user } = require('./../validators/user.schema')
 
 exports.addUser = async (req, res) => {
 
@@ -12,14 +12,17 @@ exports.addUser = async (req, res) => {
         email: req.body.email
     }
 
+
     // check if the user exists in the DB
     try {
         const [userData] = await users.getUserByEmail(newUser.email);
         if (userData) {
-            return res.status(401).json({ message: 'user already exists in the database' })
+            res.status(403).json({ message: 'user already exists in the database' })
+            return;
         }
     } catch ({ message }) {
-        return res.status(500).json({ message })
+        res.status(500).json({ message })
+        return;
     }
 
 
@@ -71,7 +74,7 @@ exports.login = async (req, res) => {
         (!userData) ? res.status(404).json({ message: 'No user found' }) :
 
             bcrypt.compare(password, userData.password, (err, result) => {
-        // if both inputs are the same, continue and add cookie
+                // if both inputs are the same, continue and add cookie
                 if (result) {
                     const accessToken = generateAccessToken((userData.id).toString())
                     res.cookie('access_token', accessToken)
