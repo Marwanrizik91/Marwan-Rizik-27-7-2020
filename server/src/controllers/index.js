@@ -6,7 +6,7 @@ const messages = require('./messages')
 
 
 // User routes
-router.post('/api/user/edit', middlewares.editUserValidation, users.edit)
+router.post('/api/user/edit', middlewares.editUserValidation, middlewares.authCheck, users.edit)
 
 // Signup route
 router.post('/api/user/signup', middlewares.addUserValidation, users.addUser)

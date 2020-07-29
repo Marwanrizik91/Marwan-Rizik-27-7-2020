@@ -12,8 +12,7 @@ const schema = {
 
     editUser: Joi.object({
         firstName: firstNameSchema.required(),
-        lastName: lastNameSchema.required(),
-        email: emailSchema.required()
+        lastName: lastNameSchema.required()
     })
     
 }
