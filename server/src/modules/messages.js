@@ -14,10 +14,10 @@ exports.getMessageById = async (userId, messageId) => {
     }
 }
 
-exports.getReceivedMessages = userId => db.query('SELECT * FROM messages where "receiverId" = $1', [userId])
+exports.getReceivedMessages = userId => db.query('SELECT * FROM messages where "receiverId" = $1  ORDER BY "creationDate" desc', [userId])
 
 
-exports.getSentMessages = userId => db.query('SELECT * FROM messages where "senderId" = $1', [userId])
+exports.getSentMessages = userId => db.query('SELECT * FROM messages where "senderId" = $1  ORDER BY "creationDate" desc', [userId])
 
 
 exports.deleteMessage = async (messageId, userId) => {
