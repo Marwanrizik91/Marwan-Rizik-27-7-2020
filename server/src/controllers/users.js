@@ -61,6 +61,7 @@ exports.login = async (req, res) => {
 
         const accessToken = generateAccessToken((userData.id).toString())
         res.cookie('access_token', accessToken)
+        res.json({ data: userData, message: 'Logged successfully'})
 
     } catch ({ message }) {
 
