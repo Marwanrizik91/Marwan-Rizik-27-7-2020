@@ -1,8 +1,8 @@
 import { useRecoilState } from "recoil";
-import { messageData } from './atoms';
+import { messageState } from './atoms';
 
 export const useSetMessageData = () => {
-    const [, setMessageData] = useRecoilState(messageData)
+    const [, setMessageData] = useRecoilState(messageState)
     return (data) => {
         setMessageData(data)
     }

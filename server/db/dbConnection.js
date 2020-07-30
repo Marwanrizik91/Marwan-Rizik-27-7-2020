@@ -11,7 +11,7 @@ const devDB = {
   connectionString: process.env.DEV_DB
 };
 
-const connection = process.env.NODE_ENV === 'test' ? devDB : prodDB;
+const connection = process.env.NODE_ENV === 'dev' ? devDB : prodDB;
 
 
 const db = pgp(connection);

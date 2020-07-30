@@ -1,9 +1,8 @@
 const db = require('../../db/dbConnection');
 
 exports.add = async ({ firstName, lastName, password, email }) => {
-    const exists = await exports.getUserByEmail({ email })
+    const exists = await exports.getUserByEmail(email)
     if (exists) throw new Error('user already exists in the databse')
-
     const queryRes = await db.query(`insert into users ("firstName", "lastName", "password", "email") VALUES ($1, $2, $3, $4) returning *`,
         [firstName, lastName, password, email])
 
@@ -20,4 +19,7 @@ exports.edit = async ({ id, firstName, lastName }) => {
     return queryRes;
 }
 
-exports.getUserByEmail = email => db.query(`SELECT * FROM users where email = $1`, email);
+exports.getUserByEmail = async (email) => {
+   const queryRes = await db.query(`SELECT * FROM users where email = $1`, [email])
+   return queryRes.length? queryRes[0] : null
+};
