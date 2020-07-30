@@ -1,16 +1,11 @@
-const users = require('../modules/users')
+const users = require('../models/users')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 
 
 exports.addUser = async (req, res) => {
 
-    const newUser = {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        password: req.body.password,
-        email: req.body.email
-    }
+    const newUser = { firstName, lastName, password, email } = req.body
 
     // hash the password and then add to DB
     // add to database
@@ -21,11 +16,11 @@ exports.addUser = async (req, res) => {
     } catch ({ message }) {
         console.error(message)
         return res.status(500).json({ error: message })
-    }
+    };
 
 }
 
-exports.edit = (req, res) => {
+exports.edit = async (req, res) => {
     const userId = res.locals.user
 
     const updatedDetails = {
@@ -34,12 +29,13 @@ exports.edit = (req, res) => {
         lastName: req.body.lastName,
     }
 
-    users.edit(updatedDetails).then(() => {
-        res.status(200).json({ message: 'user edited successfully', code: 200 })
-    }).catch(err => {
+    try {
+        const editedUser = await users.edit(updatedDetails)
+        res.status(200).json({ message: 'user edited successfully', code: 200, data: editedUser })
+    } catch ({ message }) {
         console.error(err)
-        return res.status(500).json({ error: err.code })
-    });
+        return res.status(500).json({ error: message })
+    }
 }
 
 exports.login = async (req, res) => {
@@ -50,9 +46,8 @@ exports.login = async (req, res) => {
 
     // check if there is a user with this credentials
     try {
-
-        const [userData] = await users.getUserByEmail(email);
-        if(!userData)
+        const userData = await users.getUserByEmail(email);
+        if (!userData)
             throw new Error('email not found')
         const passwordsMatch = await bcrypt.compare(password, userData.password)
         if (!passwordsMatch)
@@ -60,7 +55,7 @@ exports.login = async (req, res) => {
 
         const accessToken = generateAccessToken((userData.id).toString())
         res.cookie('access_token', accessToken)
-        res.json({ data: userData, message: 'Logged successfully'})
+        res.json({ data: userData, message: 'Logged successfully' })
 
     } catch ({ message }) {
 
@@ -75,9 +70,9 @@ exports.logout = (req, res) => {
     try {
         res.clearCookie('access_token');
         res.status(200).json({ message: 'logged out successfully', code: 200 })
-    } catch (err) {
+    } catch ({ message }) {
         console.error(err)
-        res.status(500).json({ error: err })
+        res.status(500).json({ error: message })
     }
 }
 

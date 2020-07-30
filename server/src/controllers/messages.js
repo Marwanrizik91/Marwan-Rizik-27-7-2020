@@ -1,37 +1,43 @@
-const messages = require('../modules/messages');
-const users = require('../modules/users');
+const messages = require('../models/messages');
+const users = require('../models/users');
 
-exports.getOneMessage = (req, res) => {
+exports.getOneMessage = async (req, res) => {
     const messageId = req.params.id
     const userId = res.locals.user
 
-    messages.getMessageById(userId, messageId).then((message) => {
-        message.length < 1 ? res.status(200).json({ message: 'You have 0 messages' }) :
-            res.status(200).json({ message, code: 200 })
-    }).catch(err => {
-        console.error(err)
-        res.status(500).json({ error: err.message })
-    })
+    try {
+        const messageData = await messages.getMessageById(userId, messageId)
+        res.status(200).json({ data: messageData, code: 200 })
+    } catch ({ message }) {
+        console.error(message)
+        res.status(500).json({ error: message })
+    }
 }
 
-exports.getReceivedMessages = (req, res) => {
+exports.getReceivedMessages = async (req, res) => {
+
     const userId = res.locals.user
-    messages.getReceivedMessages(userId).then((messages) => {
-        res.status(200).json({ messages, code: 200 })
-    }).catch(e => {
-        console.error(e)
-        res.status(500).json({ message: e.message })
-    })
+
+    try {
+        const messagesData = await messages.getReceivedMessages(userId)
+        res.status(200).json({ data: messagesData, code: 200 })
+    } catch ({ message }) {
+        console.error(message)
+        res.status(500).json({ error: message })
+    }
 }
 
-exports.getSentMessages = (req, res) => {
+exports.getSentMessages = async (req, res) => {
+
     const userId = res.locals.user
-    messages.getSentMessages(userId).then((messages) => {
-        res.status(200).json({ messages, code: 200 })
-    }).catch(e => {
-        console.error(e)
-        res.status(500).json({ message: e.message })
-    })
+
+    try {
+        const messagesData = await messages.getSentMessages(userId)
+        res.status(200).json({ data: messagesData, code: 200 })
+    } catch ({ message }) {
+        console.error(message)
+        res.status(500).json({ error: message })
+    }
 }
 
 exports.addMessage = async (req, res) => {
@@ -39,7 +45,7 @@ exports.addMessage = async (req, res) => {
 
     // get the receiver in order to add his id to the message
     try {
-        const [receiver] = await users.getUserByEmail(req.body.email)
+        const receiver = await users.getUserByEmail(req.body.email)
         if (!receiver) throw new Error('user not found')
 
         const message = {
@@ -62,24 +68,27 @@ exports.addMessage = async (req, res) => {
 
 }
 
-exports.deleteMessage = (req, res) => {
+exports.deleteMessage = async (req, res) => {
     const messageId = req.params.id
     const userId = res.locals.user
 
-    messages.deleteMessage(messageId, userId).then((data) => {
-        res.status(200).json({ message: 'Deleted successfully' })
-    }).catch(e => {
-        console.error(e)
-        res.status(500).json({ error: e.message })
-    })
+    try {
+        const data = await messages.deleteMessage(messageId, userId)
+        res.status(200).json({ data, message: 'Deleted successfully', code: 200 })
+    } catch ({ message }) {
+        console.error(message)
+        res.status(500).json({ error: message })
+    }
 }
 
-exports.markAsRead = (req, res) => {
+exports.markAsRead = async (req, res) => {
     const messageId = req.params.id
-    messages.markAsRead(messageId).then((data) => {
+
+    try {
+        const data = await messages.markAsRead(messageId)
         res.status(200).json({ data, message: 'Mark as read successfully' })
-    }).catch(e => {
-        console.error(e)
-        res.status(500).json({ error: e.message })
-    })
+    } catch ({ message }) {
+        console.error(message)
+        res.status(500).json({ error: message })
+    }
 }
