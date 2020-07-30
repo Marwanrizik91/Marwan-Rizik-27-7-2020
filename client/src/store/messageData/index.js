@@ -1,2 +1,2 @@
-export { messageData } from './atoms';
+export { messageState } from './atoms';
 export { useSetMessageData } from './hooks'
