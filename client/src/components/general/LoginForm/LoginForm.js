@@ -6,6 +6,7 @@ import apiCall from '../../../util/apiCall'
 import { useHistory } from 'react-router-dom'
 import { routes } from '../../../constants'
 import { useRecoilValue } from 'recoil';
+import { loggedInState, useSetLoggedInState } from '../../../store/loggedIn'
 
 const useStyles = makeStyles((theme) => ({
     multiTextField: {
@@ -20,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center'
 
     },
-    registerButton : {
+    registerButton: {
         marginTop: '10px'
     }
 }));
@@ -29,6 +30,8 @@ export default function RegisterForm() {
 
     const history = useHistory()
     const classes = useStyles();
+    const loggedIn = useRecoilValue(loggedInState)
+    const setLoggedIn = useSetLoggedInState(loggedIn)
 
     const [userDetails, setUserDetails] = useState({
         email: '',
@@ -39,21 +42,22 @@ export default function RegisterForm() {
 
     const handleOnSubmit = async (e) => {
         e.preventDefault()
-         const res = await apiCall('/api/user/login', 'post', userDetails)
-         if(res.code === 200 && res.message) {
-             history.push(routes.inbox)
-         } else if(res.error){
-             setError(res.error)
-         }
+        const res = await apiCall('/api/user/login', 'post', userDetails)
+        if (res.code === 200 && res.message) {
+            setLoggedIn(true)
+            history.push(routes.inbox)
+        } else if (res.error) {
+            setError(res.error)
+        }
     }
 
     const handleChange = (e) => {
         setUserDetails({ ...userDetails, [e.target.id]: e.target.value });
-      }
+    }
 
 
     return (
-        <form onSubmit={handleOnSubmit}  className={classes.multiTextField} noValidate autoComplete="off">
+        <form onSubmit={handleOnSubmit} className={classes.multiTextField} noValidate autoComplete="off">
             <div className={classes.inputContainer}>
                 <TextField required id="email"
                     label="email"
@@ -67,7 +71,7 @@ export default function RegisterForm() {
                     fullWidth
                     onChange={handleChange}
                     defaultValue="" />
-               
+
                 <Button variant="contained" type="submit" color="secondary">Login</Button>
                 <Button variant="contained" className={classes.registerButton} onClick={() => history.push(routes.register)} color="secondary">Register</Button>
 

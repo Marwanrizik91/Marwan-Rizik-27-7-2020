@@ -19,7 +19,6 @@ export default async function apiCall(route, method, body = {}) {
     }
 
     const data = await response.json()
-    console.log(data)
 
     return data
 
