@@ -1,18 +1,27 @@
+import { routes } from '../constants'
+import deleteAllCookies from './deleteCookies'
 
+export default async function apiCall(route, method, body = {}) {
 
-export default async function apiCall(host, route, method, body = {}) {
-
-    const response = await fetch(host + route, {
+    const response = await fetch(process.env.REACT_APP_API_HOST + route, {
         method: method,
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(body)
+        body: method === 'get'? null : JSON.stringify(body),
+        credentials: 'include'
+
     })
 
-    const data = await response.json()
+    if (response.status === 403 || response.status === 401) {
+        deleteAllCookies()
+        window.location = routes.login
+    }
 
+    const data = await response.json()
+    console.log(data)
 
     return data
 
 }
+
