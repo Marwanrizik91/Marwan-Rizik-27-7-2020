@@ -15,6 +15,7 @@ import MailIcon from '@material-ui/icons/Mail';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { routes } from '../../../constants'
 import { useHistory } from 'react-router-dom'
+import { logout } from '../../../actions/actions'
 
 const navBarData = [
     {
@@ -70,6 +71,11 @@ export default function MainPageWithLeftDrawer({ children }) {
         email: 'Marwan.rizik@gmail.com'
     })
 
+    const handleLogout = () => {
+        logout()
+        history.push(routes.login)
+    }
+
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -100,7 +106,7 @@ export default function MainPageWithLeftDrawer({ children }) {
                 </List>
                 <Divider />
                 <List>
-                    <ListItem button key="Logout">
+                    <ListItem onClick={handleLogout} button key="Logout">
                         <ListItemIcon><ExitToAppIcon /></ListItemIcon>
                         <ListItemText primary="Logout" />
                     </ListItem>

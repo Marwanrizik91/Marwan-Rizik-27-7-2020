@@ -4,28 +4,46 @@ import MainPageWithLeftDrawer from '../screens/MainPage/MainPageWithLeftDrawer';
 import { Switch, Route } from "react-router-dom";
 import { routes } from '../../constants';
 import RegisterPage from '../screens/RegisterPage';
-
+import LoginPage from '../screens/LoginPage';
+import { useRecoilValue } from 'recoil';
+import { loggedInState } from '../../store/loggedIn';
+import InboxPage from '../screens/InboxPage'
+import SentPage from '../screens/SentPage'
+import { useHistory, useLocation } from 'react-router-dom'
 
 
 function App() {
 
-  const [loggedIn, setLoggedIn] = useState(false)
+  const history = useHistory()
+  const location = useLocation()
+  const loggedIn = useRecoilValue(loggedInState)
+
+  if (!loggedIn && location.pathname !== routes.login && location.pathname !== routes.register){ 
+     history.push(routes.login)
+     return ""
+  }
 
   return (
     <>
-      <MainPageWithLeftDrawer>
-        <Switch>
-          <Route exact path={routes.inbox}>
-              {loggedIn? <div>hi</div>: <RegisterPage />}
-          </Route>
+      <Switch>
+        <Route exact path={routes.register}>
+          <RegisterPage />
+        </Route>
+        <Route exact path={routes.login}>
+          <LoginPage />
+        </Route>
+        <MainPageWithLeftDrawer>
           <Route exact path={routes.sent}>
-            <div>sent</div>
+            <SentPage />
+          </Route>
+          <Route exact path={routes.inbox}>
+            <InboxPage />
           </Route>
           <Route exact path={routes.deleted}>
             <div>deleted</div>
           </Route>
-        </Switch>
-      </MainPageWithLeftDrawer>
+        </MainPageWithLeftDrawer>
+      </Switch>
     </>
   );
 }
