@@ -6,7 +6,7 @@ const schema = {
     message: Joi.object({
         email: emailSchema,
         title: Joi.string().min(1).max(150).required(),
-        content: Joi.string()
+        content: Joi.string(),
     })
 }
 
