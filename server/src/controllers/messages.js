@@ -48,8 +48,11 @@ exports.addMessage = async (req, res) => {
         const receiver = await users.getUserByEmail(req.body.email)
         if (!receiver) throw new Error('user not found')
 
+        const sender = await users.getUserById(res.locals.user)
+
         const message = {
             //gets the sender id from the locals(added when authed)
+            senderEmail: sender.email,
             senderId: res.locals.user,
             receiverId: receiver.id.toString(),
             title: req.body.title,
