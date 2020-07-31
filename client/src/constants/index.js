@@ -1,3 +1,5 @@
+
+
 export const routes = {
     inbox: "/inbox",
     deleted: "/deleted",
@@ -6,3 +8,4 @@ export const routes = {
     sent: "/sent",
     message: "/message:id"
 }
+
