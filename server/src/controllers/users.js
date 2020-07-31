@@ -48,14 +48,14 @@ exports.login = async (req, res) => {
     try {
         const userData = await users.getUserByEmail(email);
         if (!userData)
-            throw new Error('email not found')
+            throw new Error('user not found')
         const passwordsMatch = await bcrypt.compare(password, userData.password)
         if (!passwordsMatch)
-            throw new Error('passwords do not match')
+            throw new Error('incorrect password')
 
         const accessToken = generateAccessToken((userData.id).toString())
         res.cookie('access_token', accessToken)
-        res.json({ data: userData, message: 'Logged successfully' })
+        res.json({ data: userData, message: 'Logged successfully', code: 200 })
 
     } catch ({ message }) {
 
