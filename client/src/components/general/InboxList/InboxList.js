@@ -1,10 +1,12 @@
 import React from 'react'
-import InboxListItem from '../InboxListItem';
+import MessagesListItem from '../MessagesListItem';
 import Typography from '@material-ui/core/Typography';
 
 
 
 export default function InboxList({ messagesData: { data = [] } }) {
+
+    console.log(data)
 
     if(!data.length) {
         return (
@@ -18,8 +20,8 @@ export default function InboxList({ messagesData: { data = [] } }) {
     }
 
     return (
-        data.map(({ senderEmail, senderFirstName, senderLastName, title, content, creationDate, id, isRead }) => (
-            <InboxListItem key={id} data={data} first={senderFirstName} isRead={isRead} last={senderLastName} email={senderEmail} title={title} content={content} creationDate={creationDate} />
+        data.map(({ senderEmail, senderFirstName, senderLastName, title, content, creationDate, id, isRead, receiverDeleted }) => (
+            <MessagesListItem key={id} id={id} data={data} first={senderFirstName} isRead={isRead} last={senderLastName} email={senderEmail} title={title} content={content} creationDate={creationDate} deleted={receiverDeleted}/>
         ))
     )
 

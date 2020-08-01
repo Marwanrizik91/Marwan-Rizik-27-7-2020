@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -13,24 +13,21 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import CreateIcon from '@material-ui/icons/Create';
 import { routes } from '../../../constants'
 import { useHistory } from 'react-router-dom'
-import { logout } from '../../../actions/actions'
+import { logout, addMessage, getReceivedMessages, getSentMessages } from '../../../actions/actions'
+import ComposeDialog from '../../general/ComposeDialog'
+import { navBarData, currentLocation } from '../../../constants'
+import Badge from '@material-ui/core/Badge';
+import { messageState, useSetMessageData } from '../../../store/messageData'
+import { userData } from '../../../store/userData'
+import { useRecoilValue } from 'recoil'
+import capitalizeFirstLetter from '../../../util/capitalizeFirstLetter'
+import Avatar from '@material-ui/core/Avatar';
+import capFirstLetter from '../../../util/firstLetterCap'
 
-const navBarData = [
-    {
-        title: "Inbox",
-        redirectLink: routes.inbox,
-    },
-    {
-        title: "Sent",
-        redirectLink: routes.sent,
-    },
-    {
-        title: "Deleted",
-        redirectLink: routes.deleted
-    }
-]
+
 
 
 const drawerWidth = 240;
@@ -57,22 +54,69 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.background.default,
         padding: theme.spacing(3),
     },
+    badge: {
+        marginLeft: '30px'
+    },
+    avatar: {
+        marginRight: '7px',
+        alignSelf: 'center'
+    },
 }));
 
 export default function MainPageWithLeftDrawer({ children }) {
     const classes = useStyles();
 
+    const loggedUser = useRecoilValue(userData)
+
+    const messageData = useRecoilValue(messageState)
+    const setRecoilMessagesData = useSetMessageData()
+    const [newMessages, setNewMessages] = useState()
+
+    useEffect(() => {
+        if (window.location.pathname === '/inbox') {
+            const newmsgs = messageData?.data?.filter(msg => msg.isRead === false)
+            setNewMessages(newmsgs)
+        }
+        return
+    }, [messageData])
+
     let history = useHistory();
 
+    //Compose dialog state and handle functions
+    const [dialogOpen, setDialogOpen] = React.useState(false);
+    const [error, setError] = React.useState("");
 
-    const [userData, setUserData] = useState({
-        firstName: 'Marwan',
-        lastName: 'Rizik',
-        email: 'Marwan.rizik@gmail.com'
-    })
+
+    const handleClickOpen = () => {
+        setDialogOpen(true);
+    };
+
+    const handleClose = () => {
+        setDialogOpen(false);
+    };
+
+
+    const handleSend = async (body) => {
+        const res = await addMessage(body)
+        if (currentLocation === '/') {
+            const newMsgsList = await getReceivedMessages()
+            setRecoilMessagesData(newMsgsList)
+        } else if (currentLocation === '/sent') {
+            const newMsgsList = await getSentMessages()
+            setRecoilMessagesData(newMsgsList)
+        }
+        if (res.error) {
+            setError(res.error)
+            setDialogOpen(true);
+        } else {
+            setDialogOpen(false)
+        }
+    }
+
 
     const handleLogout = () => {
         logout()
+        localStorage.removeItem('user')
         history.push(routes.login)
     }
 
@@ -81,9 +125,13 @@ export default function MainPageWithLeftDrawer({ children }) {
             <CssBaseline />
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar>
+                    <Avatar className={classes.avatar}>{`${capFirstLetter(loggedUser.firstName)}${capFirstLetter(loggedUser.lastName)}`}</Avatar>
                     <Typography variant="h6" noWrap>
-                        {`Welcome ${userData.firstName} ${userData.lastName}`}
+                        {`Welcome ${capitalizeFirstLetter(loggedUser.firstName)} ${capitalizeFirstLetter(loggedUser.lastName)}`}
                     </Typography>
+                    <Badge className={classes.badge} badgeContent={newMessages?.length} color="secondary">
+                        <MailIcon />
+                    </Badge>
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -97,6 +145,10 @@ export default function MainPageWithLeftDrawer({ children }) {
                 <div className={classes.toolbar} />
                 <Divider />
                 <List>
+                    <ListItem onClick={handleClickOpen} button key="Logout">
+                        <ListItemIcon><CreateIcon /></ListItemIcon>
+                        <ListItemText primary="Compose" />
+                    </ListItem>
                     {navBarData.map((item, index) => (
                         <ListItem button key={item.title} onClick={() => history.push(item.redirectLink)}>
                             <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
@@ -105,16 +157,15 @@ export default function MainPageWithLeftDrawer({ children }) {
                     ))}
                 </List>
                 <Divider />
-                <List>
-                    <ListItem onClick={handleLogout} button key="Logout">
-                        <ListItemIcon><ExitToAppIcon /></ListItemIcon>
-                        <ListItemText primary="Logout" />
-                    </ListItem>
-                </List>
+                <ListItem onClick={handleLogout} button key="Logout">
+                    <ListItemIcon><ExitToAppIcon /></ListItemIcon>
+                    <ListItemText primary="Logout" />
+                </ListItem>
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.toolbar} />
                 {children}
+                <ComposeDialog open={dialogOpen} handleClose={handleClose} handleSend={handleSend} error={error} />
             </main>
         </div>
     );

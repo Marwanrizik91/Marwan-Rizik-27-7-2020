@@ -11,11 +11,15 @@ const useStyles = makeStyles((theme) => ({
         '& .MuiTextField-root': {
             margin: theme.spacing(1),
         },
+        height: '100%',
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'center',
     },
     inputContainer: {
         display: 'flex',
         flexDirection: 'column',
-        justtifyContent: 'center',
+        justifyContent: 'center',
         alignItems: 'center'
 
     },
@@ -24,6 +28,9 @@ const useStyles = makeStyles((theme) => ({
     },
     errorMessage: {
         color: "red"
+    },
+    button: {
+        margin: '7px'
     }
 }));
 
@@ -68,7 +75,7 @@ export default function RegisterForm() {
         <form onSubmit={handleOnSubmit} className={classes.multiTextField} noValidate autoComplete="off">
             <div className={classes.inputContainer}>
                 <TextField required id="email"
-                    label="email"
+                    label="Email"
                     type="email"
                     fullWidth
                     onChange={handleChange}
@@ -86,20 +93,20 @@ export default function RegisterForm() {
                     onChange={handleChange}
                     defaultValue="" />
                 <TextField required id="password"
-                    label="password"
+                    label="Password"
                     type="password"
                     fullWidth
                     onChange={handleChange}
                     defaultValue="" />
                 <TextField required id="confirmPassword"
-                    label="confirm password"
+                    label="Confirm Password"
                     type="password"
                     fullWidth
                     onChange={handleChange}
                     defaultValue="" />
-                <Button variant="contained" type="submit" color="secondary">Register</Button>
+                <Button className={classes.button} variant="contained" type="submit" color="secondary">Register</Button>
                 <div>Already have an account?</div>
-                <Button variant="contained" onClick={() => history.push(routes.login)} color="secondary">click here</Button>
+                <Button  onClick={() => history.push(routes.login)} >click here</Button>
                 <span className={classes.succcessMessage}>{resMessage}</span>
                 <span className={classes.errorMessage}>{errorMessage}</span>
             </div>
