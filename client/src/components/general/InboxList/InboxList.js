@@ -19,7 +19,7 @@ export default function InboxList({ messagesData: { data = [] } }) {
 
     return (
         data.map(({ senderEmail, senderFirstName, senderLastName, title, content, creationDate, id, isRead }) => (
-            <InboxListItem key={id} data={data} first={senderFirstName} isRead={isRead} last={senderLastName} email={senderEmail} title={title} content={content} creationDate={creationDate} />
+            <InboxListItem key={id} id={id} data={data} first={senderFirstName} isRead={isRead} last={senderLastName} email={senderEmail} title={title} content={content} creationDate={creationDate} />
         ))
     )
 

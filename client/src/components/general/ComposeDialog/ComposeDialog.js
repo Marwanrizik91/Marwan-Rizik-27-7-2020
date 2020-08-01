@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -6,9 +7,21 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { Typography } from '@material-ui/core';
+
+const useStyles = makeStyles({
+    error: {
+        color: 'red',
+        alignSelf: 'center'
+    }, 
+
+});
 
 
-export default function FormDialog({ open, handleClose, handleSend, error }) {
+export default function FormDialog({ open, handleClose, handleSend, email, error }) {
+
+
+    const classes = useStyles()
 
     const [messageBody, setMessageBody] = useState({
         email: '',
@@ -25,7 +38,7 @@ export default function FormDialog({ open, handleClose, handleSend, error }) {
     return (
         <div>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Send an email</DialogTitle>
+                <DialogTitle id="form-dialog-title">Send a message</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
 
@@ -36,6 +49,7 @@ export default function FormDialog({ open, handleClose, handleSend, error }) {
                         id="email"
                         label="Recepient Email Address"
                         type="email"
+                        value={email && email}
                         fullWidth
                         onChange={handleChange}
                     />
@@ -64,6 +78,11 @@ export default function FormDialog({ open, handleClose, handleSend, error }) {
                     <Button onClick={() => { handleSend(messageBody) }} color="primary">
                         Send</Button>
                 </DialogActions>
+                        
+                    <Typography component="span"
+                        variant="body2"
+                        className={classes.error}
+                        color="textPrimary">{error}</Typography>
             </Dialog>
         </div>
     );

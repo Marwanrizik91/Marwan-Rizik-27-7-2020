@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function SentListItem({ email, title, content, senderDeleted, creationDate, first, last }) {
+export default function SentListItem({ email, title, content, creationDate }) {
   
 
   const classes = useStyles();
@@ -50,7 +50,7 @@ export default function SentListItem({ email, title, content, senderDeleted, cre
                 >
                   {`${email}-  `}
                 </Typography>
-                {`${content}`}
+                {`${content.length < 70 ? content : content.slice(0, 70) + '...'}`}
                 <br/>
                 {creationDate.split('T')[0]}
               </React.Fragment>

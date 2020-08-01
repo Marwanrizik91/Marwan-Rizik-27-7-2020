@@ -7,18 +7,25 @@ import { useHistory } from 'react-router-dom'
 import { routes } from '../../../constants'
 import { useRecoilValue } from 'recoil';
 import { loggedInState, useSetLoggedInState } from '../../../store/loggedIn'
+import { useSetUserData } from '../../../store/userData'
+
 
 const useStyles = makeStyles((theme) => ({
     multiTextField: {
         '& .MuiTextField-root': {
             margin: theme.spacing(1),
         },
+        height: '100%',
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'center',
     },
     inputContainer: {
         display: 'flex',
         flexDirection: 'column',
-        justtifyContent: 'center',
-        alignItems: 'center'
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '90%'
 
     },
     registerButton: {
@@ -32,6 +39,7 @@ export default function RegisterForm() {
     const classes = useStyles();
     const loggedIn = useRecoilValue(loggedInState)
     const setLoggedIn = useSetLoggedInState(loggedIn)
+    const setUserData = useSetUserData()
 
     const [userDetails, setUserDetails] = useState({
         email: '',
@@ -43,6 +51,13 @@ export default function RegisterForm() {
     const handleOnSubmit = async (e) => {
         e.preventDefault()
         const res = await apiCall('/api/user/login', 'post', userDetails)
+        const user = {
+            firstName: res.data.firstName,
+            lastName: res.data.lastName,
+            email: res.data.email
+        }
+        localStorage.setItem('user', JSON.stringify(user))
+        setUserData(user)
         if (res.code === 200 && res.message) {
             setLoggedIn(true)
             history.push(routes.inbox)
@@ -60,13 +75,13 @@ export default function RegisterForm() {
         <form onSubmit={handleOnSubmit} className={classes.multiTextField} noValidate autoComplete="off">
             <div className={classes.inputContainer}>
                 <TextField required id="email"
-                    label="email"
+                    label="Email"
                     type="email"
                     fullWidth
                     onChange={handleChange}
                     defaultValue="" />
                 <TextField required id="password"
-                    label="password"
+                    label="Password"
                     type="password"
                     fullWidth
                     onChange={handleChange}

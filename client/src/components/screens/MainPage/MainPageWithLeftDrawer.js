@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -18,22 +18,12 @@ import { routes } from '../../../constants'
 import { useHistory } from 'react-router-dom'
 import { logout, addMessage } from '../../../actions/actions'
 import ComposeDialog from '../../general/ComposeDialog'
-
-
-const navBarData = [
-    {
-        title: "Inbox",
-        redirectLink: routes.inbox,
-    },
-    {
-        title: "Sent",
-        redirectLink: routes.sent,
-    },
-    {
-        title: "Deleted",
-        redirectLink: routes.deleted
-    }
-]
+import { navBarData } from '../../../constants'
+import Badge from '@material-ui/core/Badge';
+import { messageState } from '../../../store/messageData'
+import { userData } from '../../../store/userData'
+import { useRecoilValue } from 'recoil'
+import capitalizeFirstLetter from '../../../util/capitalizeFirstLetter'
 
 
 const drawerWidth = 240;
@@ -60,10 +50,26 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.background.default,
         padding: theme.spacing(3),
     },
+    badge: {
+        marginLeft: '30px'
+    }
 }));
 
 export default function MainPageWithLeftDrawer({ children }) {
     const classes = useStyles();
+
+    const loggedUser = useRecoilValue(userData)
+
+    const messageData = useRecoilValue(messageState)
+    const [newMessages, setNewMessages] = useState()
+
+    useEffect(() => {
+        if (window.location.pathname === '/inbox'){
+            const newmsgs = messageData?.data?.filter(msg => msg.isRead === false)
+            setNewMessages(newmsgs)
+        }
+        return
+    }, [messageData])
 
     let history = useHistory();
 
@@ -75,14 +81,14 @@ export default function MainPageWithLeftDrawer({ children }) {
     const handleClickOpen = () => {
         setDialogOpen(true);
     };
-  
+
     const handleClose = () => {
         setDialogOpen(false);
     };
 
     const handleSend = async (body) => {
         const res = await addMessage(body)
-        if(res.error){
+        if (res.error) {
             setError(res.error)
             setDialogOpen(true);
         } else {
@@ -91,14 +97,10 @@ export default function MainPageWithLeftDrawer({ children }) {
     }
 
 
-    const [userData, setUserData] = useState({
-        firstName: 'Marwan',
-        lastName: 'Rizik',
-        email: 'Marwan.rizik@gmail.com'
-    })
 
     const handleLogout = () => {
         logout()
+        localStorage.removeItem('user')
         history.push(routes.login)
     }
 
@@ -108,8 +110,11 @@ export default function MainPageWithLeftDrawer({ children }) {
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar>
                     <Typography variant="h6" noWrap>
-                        {`Welcome ${userData.firstName} ${userData.lastName}`}
+                        {`Welcome ${capitalizeFirstLetter(loggedUser.firstName)} ${capitalizeFirstLetter(loggedUser.lastName)}`}
                     </Typography>
+                    <Badge className={classes.badge} badgeContent={newMessages?.length} color="secondary">
+                        <MailIcon />
+                    </Badge>
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -143,7 +148,7 @@ export default function MainPageWithLeftDrawer({ children }) {
             <main className={classes.content}>
                 <div className={classes.toolbar} />
                 {children}
-                <ComposeDialog open={dialogOpen} handleClose={handleClose} handleSend={handleSend} error={error}/>
+                <ComposeDialog open={dialogOpen} handleClose={handleClose} handleSend={handleSend} error={error} />
             </main>
         </div>
     );
