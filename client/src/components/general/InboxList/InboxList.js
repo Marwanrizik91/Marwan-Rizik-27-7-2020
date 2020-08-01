@@ -6,8 +6,6 @@ import Typography from '@material-ui/core/Typography';
 
 export default function InboxList({ messagesData: { data = [] } }) {
 
-    console.log(data)
-
     if(!data.length) {
         return (
             <Typography
