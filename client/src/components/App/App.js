@@ -39,9 +39,6 @@ function App() {
           <Route exact path={routes.inbox}>
             <InboxPage />
           </Route>
-          <Route exact path={routes.deleted}>
-            <div>deleted</div>
-          </Route>
         </MainPageWithLeftDrawer>
       </Switch>
     </>

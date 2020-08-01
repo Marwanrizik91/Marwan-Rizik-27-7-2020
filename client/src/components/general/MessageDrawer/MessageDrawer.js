@@ -3,16 +3,16 @@ import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
-import Avatar from '@material-ui/core/Avatar';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import ComposeDialog from '../ComposeDialog'
-import { addMessage, deleteMessage } from '../../../actions/actions';
+import { addMessage, deleteMessage, getSentMessages, getReceivedMessages } from '../../../actions/actions';
 import capitalizeFirstLetter from '../../../util/capitalizeFirstLetter'
+import { currentLocation } from '../../../constants'
+import { messageState, useSetMessageData } from '../../../store/messageData'
+import { useRecoilValue } from 'recoil'
 
 const drawerHeight = 500
 
@@ -48,6 +48,10 @@ const useStyles = makeStyles((theme) => ({
 
 export default function MessageDrawer({ message, openDrawer, setOpenDrawer }) {
 
+
+    const messageData = useRecoilValue(messageState)
+    const setRecoilMessagesData = useSetMessageData()
+
     const classes = useStyles();
 
     const toggleDrawer = (open) => (event) => {
@@ -73,6 +77,7 @@ export default function MessageDrawer({ message, openDrawer, setOpenDrawer }) {
 
    const handleSend = async (body) => {
        const res = await addMessage(body)
+       
        if (res.error) {
            setError(res.error)
            setDialogOpen(true);
@@ -84,16 +89,22 @@ export default function MessageDrawer({ message, openDrawer, setOpenDrawer }) {
    const handleDelete = async () => {
         try {
             await deleteMessage(message.id)
-            console.log(message)
+            if(currentLocation === '/'){
+                const newMsgsList = await getReceivedMessages()
+                setRecoilMessagesData(newMsgsList)  
+            } 
+            if(currentLocation === '/sent'){
+                const newMsgsList = await getSentMessages()
+                setRecoilMessagesData(newMsgsList)
+            }
         } catch({message}) {
-            console.log(message)
+            setError(message)
         }
    }
 
     useEffect(() => {
         setOpenDrawer(openDrawer)
     }, [openDrawer])
-
 
 
     return (
@@ -107,6 +118,29 @@ export default function MessageDrawer({ message, openDrawer, setOpenDrawer }) {
 
                     <Card className={classes.card}>
                         <CardContent>
+                            {currentLocation === '/sent' && 
+                            <>
+                            <Typography className={classes.title} color="textSecondary" gutterBottom>
+                                To: {message && capitalizeFirstLetter(message.receiver.firstName)} {message && capitalizeFirstLetter(message.receiver.lastName)} <br/> 
+                                {message?.receiver.email}
+                            </Typography>
+                            <Typography className={classes.pos} color="textSecondary">
+                                At : {message?.creationDate.split('T')[0]}
+                            </Typography>
+                        <CardActions className={classes.cardActions}>
+                            <Button variant='contained' onClick={handleClickOpen} color='primary' size="small">Write again</Button>
+                            <Button variant='contained' onClick={handleDelete} color='secondary' size="small">Delete</Button>
+                        </CardActions>
+                            <Typography variant="h4" component="h2">
+                                {message?.title}
+                            </Typography>
+                            <Divider className={classes.divider}/>
+                            <Typography variant="body2" component="p">
+                                {message?.content}
+                            </Typography>
+                            </>}
+                            {currentLocation === '/' && 
+                            <>
                             <Typography className={classes.title} color="textSecondary" gutterBottom>
                                 From: {message && capitalizeFirstLetter(message.sender.firstName)} {message && capitalizeFirstLetter(message.sender.lastName)} <br/> 
                                 {message?.senderEmail}
@@ -125,9 +159,11 @@ export default function MessageDrawer({ message, openDrawer, setOpenDrawer }) {
                             <Typography variant="body2" component="p">
                                 {message?.content}
                             </Typography>
+                            </>}
+                            
                         </CardContent>
                     </Card>
-                    <ComposeDialog open={dialogOpen} handleClose={handleClose} handleSend={handleSend} error={error} email={message?.senderEmail} />
+                    <ComposeDialog open={dialogOpen} handleClose={handleClose} handleSend={handleSend} error={error} senderEmail={message?.senderEmail} receiverEmail={message?.receiver.email}/>
                 </Drawer>
             </React.Fragment>
 

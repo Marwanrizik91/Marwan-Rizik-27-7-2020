@@ -1,12 +1,12 @@
 
+export const currentLocation = window.location.pathname
+
 
 export const routes = {
-    inbox: "/inbox",
-    deleted: "/deleted",
+    inbox: "/",
     login: "/login",
     register: "/register",
     sent: "/sent",
-    message: "/message:id"
 }
 
 export const navBarData = [
@@ -18,8 +18,4 @@ export const navBarData = [
         title: "Sent",
         redirectLink: routes.sent,
     },
-    {
-        title: "Deleted",
-        redirectLink: routes.deleted
-    }
 ]

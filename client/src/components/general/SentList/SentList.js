@@ -1,5 +1,5 @@
 import React from 'react'
-import SentListItem from '../SentListItem';
+import MessagesListItem from '../MessagesListItem';
 import Typography from '@material-ui/core/Typography';
 
 
@@ -18,8 +18,8 @@ export default function SentList({ messagesData: { data = [] } }) {
     }
 
     return (
-        data.map(({ senderEmail, title, content, creationDate, id }) => (
-            <SentListItem key={id} email={senderEmail} title={title} content={content} creationDate={creationDate} />
+        data.map(({ senderEmail, title, content, creationDate, id, isRead, senderDeleted }) => (
+            <MessagesListItem key={id} id={id} email={senderEmail} title={title} content={content} creationDate={creationDate} isRead={isRead} sentList={true} deleted={senderDeleted}/>
         ))
     )
 

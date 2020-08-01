@@ -16,14 +16,18 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import CreateIcon from '@material-ui/icons/Create';
 import { routes } from '../../../constants'
 import { useHistory } from 'react-router-dom'
-import { logout, addMessage } from '../../../actions/actions'
+import { logout, addMessage, getReceivedMessages, getSentMessages } from '../../../actions/actions'
 import ComposeDialog from '../../general/ComposeDialog'
-import { navBarData } from '../../../constants'
+import { navBarData, currentLocation } from '../../../constants'
 import Badge from '@material-ui/core/Badge';
-import { messageState } from '../../../store/messageData'
+import { messageState, useSetMessageData } from '../../../store/messageData'
 import { userData } from '../../../store/userData'
 import { useRecoilValue } from 'recoil'
 import capitalizeFirstLetter from '../../../util/capitalizeFirstLetter'
+import Avatar from '@material-ui/core/Avatar';
+import capFirstLetter from '../../../util/firstLetterCap'
+
+
 
 
 const drawerWidth = 240;
@@ -52,7 +56,11 @@ const useStyles = makeStyles((theme) => ({
     },
     badge: {
         marginLeft: '30px'
-    }
+    },
+    avatar: {
+        marginRight: '7px',
+        alignSelf: 'center'
+    },
 }));
 
 export default function MainPageWithLeftDrawer({ children }) {
@@ -61,10 +69,11 @@ export default function MainPageWithLeftDrawer({ children }) {
     const loggedUser = useRecoilValue(userData)
 
     const messageData = useRecoilValue(messageState)
+    const setRecoilMessagesData = useSetMessageData()
     const [newMessages, setNewMessages] = useState()
 
     useEffect(() => {
-        if (window.location.pathname === '/inbox'){
+        if (window.location.pathname === '/inbox') {
             const newmsgs = messageData?.data?.filter(msg => msg.isRead === false)
             setNewMessages(newmsgs)
         }
@@ -86,8 +95,16 @@ export default function MainPageWithLeftDrawer({ children }) {
         setDialogOpen(false);
     };
 
+
     const handleSend = async (body) => {
         const res = await addMessage(body)
+        if (currentLocation === '/') {
+            const newMsgsList = await getReceivedMessages()
+            setRecoilMessagesData(newMsgsList)
+        } else if (currentLocation === '/sent') {
+            const newMsgsList = await getSentMessages()
+            setRecoilMessagesData(newMsgsList)
+        }
         if (res.error) {
             setError(res.error)
             setDialogOpen(true);
@@ -95,7 +112,6 @@ export default function MainPageWithLeftDrawer({ children }) {
             setDialogOpen(false)
         }
     }
-
 
 
     const handleLogout = () => {
@@ -109,6 +125,7 @@ export default function MainPageWithLeftDrawer({ children }) {
             <CssBaseline />
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar>
+                    <Avatar className={classes.avatar}>{`${capFirstLetter(loggedUser.firstName)}${capFirstLetter(loggedUser.lastName)}`}</Avatar>
                     <Typography variant="h6" noWrap>
                         {`Welcome ${capitalizeFirstLetter(loggedUser.firstName)} ${capitalizeFirstLetter(loggedUser.lastName)}`}
                     </Typography>

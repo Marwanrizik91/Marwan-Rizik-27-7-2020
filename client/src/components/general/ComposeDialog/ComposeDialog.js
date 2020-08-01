@@ -8,6 +8,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Typography } from '@material-ui/core';
+import { currentLocation } from '../../../constants'
 
 const useStyles = makeStyles({
     error: {
@@ -18,7 +19,7 @@ const useStyles = makeStyles({
 });
 
 
-export default function FormDialog({ open, handleClose, handleSend, email, error }) {
+export default function FormDialog({ open, handleClose, handleSend, senderEmail, error, receiverEmail }) {
 
 
     const classes = useStyles()
@@ -34,7 +35,6 @@ export default function FormDialog({ open, handleClose, handleSend, email, error
         setMessageBody({ ...messageBody, [e.target.id]: e.target.value });
     }
 
-
     return (
         <div>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
@@ -49,7 +49,7 @@ export default function FormDialog({ open, handleClose, handleSend, email, error
                         id="email"
                         label="Recepient Email Address"
                         type="email"
-                        value={email && email}
+                        value={currentLocation === '/sent'? receiverEmail : currentLocation === '/'? senderEmail : null}
                         fullWidth
                         onChange={handleChange}
                     />
