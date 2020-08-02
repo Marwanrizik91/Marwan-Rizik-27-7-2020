@@ -58,6 +58,7 @@ I'm a passionate JS fullstack developer who is seeking an opportunity to work an
       - PostgreSQL(database)
 - ### Client TechStack 
   - #### ReactJS front end :yum: 
+      - MaterialUI
       - React-router-dom
       - Recoil(for state management)
     
