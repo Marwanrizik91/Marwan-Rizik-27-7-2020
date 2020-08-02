@@ -1,13 +1,32 @@
 # Marwan-Rizik-27-7-2020
 
-## About the project
+## visit here https://herolo-test.netlify.app/
 
+:warning: **Since the server and database are hosted on Heroku(free plan), you will have to wait about 10 seconds on the first run**:warning:
+
+## Table Of Contents
+- [About the project](#About-the-project)
+- [About the app](#About-the-app)
+- [Demo](#Demo)
+- [Techstack](#Techstack)
+    - [Server](#Server-TechStack)
+    - [Client](#Client-TechStack)
+    - [Deployment](#Deployment)
+- [Special Gotchas](#Special-Gotchas)
+- [Installation](#Installation)
+
+## About the project
 
 #### This project is part of a job assignment, where i had to build a messaging/email:e-mail: like app in 5-7 days.  
 **Why Did i take this challenge** :question: 
 I'm a passionate JS fullstack developer who is seeking an opportunity to work and utilize my passion to further growth of the company and be part of it. Challenges and problem solving were always the things i liked to do, As well i wanted to prove that i have the skills to do more in a short time and learn new technologies.
 
 ## About the app
+- #### How to use it
+    - Create user
+    - Send a message(click compose)
+        - in order to send a message you must know the recipient registered email.
+    - ENJOY :smiley:
 -  app requirements 
     - write message
     - get message/s
@@ -56,7 +75,7 @@ I'm a passionate JS fullstack developer who is seeking an opportunity to work an
 - ### Things to improve :question: 
     - Polish up the code(make it cleaner and easier to read)
     - Remove/change redundant code
-    - Add Deleted messages tap
+    - Add Deleted messages tab
     - Option to mark as read without opening the message
     - Improve the design
 
