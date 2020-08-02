@@ -73,6 +73,7 @@ I'm a passionate JS fullstack developer who is seeking an opportunity to work an
     - #### App design
         - At first i had a different design that i wanted to clone, but i realized i was short in time, so i ended up using a whole component from MaterialUI, and tweaking it a little bit to my likings.
 - ### Things to improve :question: 
+    - Add mobile support
     - Polish up the code(make it cleaner and easier to read)
     - Remove/change redundant code
     - Add Deleted messages tab
