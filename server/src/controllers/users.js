@@ -54,7 +54,10 @@ exports.login = async (req, res) => {
             throw new Error('incorrect password')
 
         const accessToken = generateAccessToken((userData.id).toString())
-        res.cookie('access_token', accessToken, { sameSite: "None"})
+        res.cookie('access_token', accessToken, {
+            sameSite: "None",
+            secure: true
+        })
         res.json({ data: userData, message: 'Logged successfully', code: 200 })
 
     } catch ({ message }) {

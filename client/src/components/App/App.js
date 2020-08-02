@@ -18,10 +18,9 @@ function App() {
   const location = useLocation()
   const loggedIn = useRecoilValue(loggedInState)
 
-  if (!loggedIn && location.pathname !== routes.login && location.pathname !== routes.register){ 
-     history.push(routes.login)
-    console.log('its happening now')
-     return ""
+  if (!loggedIn && location.pathname !== routes.login && location.pathname !== routes.register) {
+    history.push(routes.login)
+    return ""
   }
 
   return (
