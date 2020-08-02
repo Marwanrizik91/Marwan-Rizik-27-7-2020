@@ -20,6 +20,7 @@ function App() {
 
   if (!loggedIn && location.pathname !== routes.login && location.pathname !== routes.register){ 
      history.push(routes.login)
+    console.log('its happening now')
      return ""
   }
 
