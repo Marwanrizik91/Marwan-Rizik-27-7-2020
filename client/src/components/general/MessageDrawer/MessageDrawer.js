@@ -10,9 +10,10 @@ import Typography from '@material-ui/core/Typography';
 import ComposeDialog from '../ComposeDialog'
 import { addMessage, deleteMessage, getSentMessages, getReceivedMessages } from '../../../actions/actions';
 import capitalizeFirstLetter from '../../../util/capitalizeFirstLetter'
-import { currentLocation } from '../../../constants'
 import { messageState, useSetMessageData } from '../../../store/messageData'
 import { useRecoilValue } from 'recoil'
+import { useLocation } from 'react-router-dom'
+
 
 const drawerHeight = 500
 
@@ -51,7 +52,7 @@ export default function MessageDrawer({ message, openDrawer, setOpenDrawer }) {
 
     const messageData = useRecoilValue(messageState)
     const setRecoilMessagesData = useSetMessageData()
-
+    const currentLocation = useLocation().pathname
     const classes = useStyles();
 
     const toggleDrawer = (open) => (event) => {

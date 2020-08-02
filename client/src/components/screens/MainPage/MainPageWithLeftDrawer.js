@@ -15,10 +15,10 @@ import MailIcon from '@material-ui/icons/Mail';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import CreateIcon from '@material-ui/icons/Create';
 import { routes } from '../../../constants'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { logout, addMessage, getReceivedMessages, getSentMessages } from '../../../actions/actions'
 import ComposeDialog from '../../general/ComposeDialog'
-import { navBarData, currentLocation } from '../../../constants'
+import { navBarData } from '../../../constants'
 import Badge from '@material-ui/core/Badge';
 import { messageState, useSetMessageData } from '../../../store/messageData'
 import { userData } from '../../../store/userData'
@@ -71,9 +71,12 @@ export default function MainPageWithLeftDrawer({ children }) {
     const messageData = useRecoilValue(messageState)
     const setRecoilMessagesData = useSetMessageData()
     const [newMessages, setNewMessages] = useState()
+    const currentLocation = useLocation().pathname
+
+    // show new messages on the AppBar
 
     useEffect(() => {
-        if (window.location.pathname === '/inbox') {
+        if (currentLocation === '/inbox') {
             const newmsgs = messageData?.data?.filter(msg => msg.isRead === false)
             setNewMessages(newmsgs)
         }
@@ -95,7 +98,7 @@ export default function MainPageWithLeftDrawer({ children }) {
         setDialogOpen(false);
     };
 
-
+    // handles the send button on compose, and updates the lists.
     const handleSend = async (body) => {
         const res = await addMessage(body)
         if (currentLocation === '/') {
@@ -119,6 +122,7 @@ export default function MainPageWithLeftDrawer({ children }) {
         localStorage.removeItem('user')
         history.push(routes.login)
     }
+
 
     return (
         <div className={classes.root}>
@@ -145,12 +149,14 @@ export default function MainPageWithLeftDrawer({ children }) {
                 <div className={classes.toolbar} />
                 <Divider />
                 <List>
-                    <ListItem onClick={handleClickOpen} button key="Logout">
+                    <ListItem onClick={handleClickOpen} button key="Compose">
                         <ListItemIcon><CreateIcon /></ListItemIcon>
                         <ListItemText primary="Compose" />
                     </ListItem>
                     {navBarData.map((item, index) => (
-                        <ListItem button key={item.title} onClick={() => history.push(item.redirectLink)}>
+                        <ListItem selected={currentLocation === item.redirectLink} button key={item.title} onClick={() => {
+                            history.push(item.redirectLink)
+                            }}>
                             <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
                             <ListItemText primary={item.title} />
                         </ListItem>

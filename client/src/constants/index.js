@@ -1,6 +1,4 @@
 
-export const currentLocation = window.location.pathname
-
 
 export const routes = {
     inbox: "/",
