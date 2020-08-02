@@ -8,13 +8,14 @@ import LoginPage from '../screens/LoginPage';
 import {  useSetLoggedInState } from '../../store/loggedIn';
 import InboxPage from '../screens/InboxPage'
 import SentPage from '../screens/SentPage'
-import { useHistory,  } from 'react-router-dom'
+import { useHistory, useLocation  } from 'react-router-dom'
 import callAPI from '../../util/apiCall'
 
 
 function App() {
 
   const history = useHistory()
+  const currentLocation = useLocation().pathname
   const SetLoggedInState = useSetLoggedInState()
 
 
@@ -22,9 +23,9 @@ function App() {
   useEffect(() => {
     (async function () {
       const res = await callAPI('/api/user/check', 'get')
-      if (res.code === 200){
+      if (res.success){
         SetLoggedInState(true)
-      } else {
+      } else if(currentLocation !== routes.login) {
         history.push(routes.login)
       }
     })()

@@ -53,10 +53,7 @@ exports.login = async (req, res) => {
             throw new Error('incorrect password')
 
         const accessToken = generateAccessToken((userData.id).toString())
-        res.cookie('access_token', accessToken, {
-            sameSite: "None",
-            secure: true
-        })
+        res.cookie('access_token', accessToken)
         res.json({ data: userData, message: 'Logged successfully', code: 200 })
 
     } catch ({ message }) {
@@ -82,15 +79,15 @@ exports.check = (req, res) => {
 
     const authHeader = req.cookies.access_token
 
-    if (authHeader == null) return res.status(401).json({ message: 'unauthorized, must log in', code: 401})
+    if (authHeader == null) return res.status(200).json({ success: false})
   
     jwt.verify(authHeader, process.env.JWT_SECRET, (err, token) => {
   
       if (err) {
-        res.status(403).json({ error: 'access forbidden', code: 403})
+        res.status(200).json({ success: false})
       }
     
-      res.status(200).json({ message: 'userLogged in', code: 200})
+      res.status(200).json({ success: true})
     })
 }
 

@@ -130,7 +130,7 @@ export default function MainPageWithLeftDrawer({ children }) {
             <CssBaseline />
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar>
-                    <Avatar className={classes.avatar}>{`${capFirstLetter(loggedUser.firstName)}${capFirstLetter(loggedUser.lastName)}`}</Avatar>
+                    <Avatar className={classes.avatar}>{`${loggedUser?.firstName.toUpperCase()}${loggedUser?.lastName.toUpperCase()}`}</Avatar>
                     <Typography variant="h6" noWrap>
                         {`Welcome ${capitalizeFirstLetter(loggedUser.firstName)} ${capitalizeFirstLetter(loggedUser.lastName)}`}
                     </Typography>
