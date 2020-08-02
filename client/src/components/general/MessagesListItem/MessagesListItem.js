@@ -6,8 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import { getMessageById, markMessageAsRead, getReceivedMessages } from '../../../actions/actions'
 import MessageDrawer from '../MessageDrawer'
-import { messageState, useSetMessageData } from '../../../store/messageData'
-import { useRecoilValue } from 'recoil'
+import { useSetMessageData } from '../../../store/messageData'
 
 
 
@@ -41,7 +40,6 @@ export default function MessagesListItem({ email, title, content, isRead, id, cr
   const [message, setMessage] = useState()
   const [openDrawer, setOpenDrawer] = useState(false)
 
-  const messageData = useRecoilValue(messageState)
   const setRecoilMessagesData = useSetMessageData()
 
   const handleClick = async () => {

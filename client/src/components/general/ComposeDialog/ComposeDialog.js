@@ -8,8 +8,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Typography } from '@material-ui/core';
-import { currentLocation } from '../../../constants'
-
+import { useLocation } from 'react-router-dom'
 const useStyles = makeStyles({
     error: {
         color: 'red',
@@ -25,11 +24,12 @@ export default function FormDialog({ open, handleClose, handleSend, senderEmail,
     const classes = useStyles()
 
     const [messageBody, setMessageBody] = useState({
-        email: '',
+        email: senderEmail || receiverEmail || '',
         title: '',
         content: ''
     })
 
+    const currentLocation = useLocation().pathname
 
     const handleChange = (e) => {
         setMessageBody({ ...messageBody, [e.target.id]: e.target.value });
