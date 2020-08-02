@@ -129,15 +129,15 @@ export default function MainPageWithLeftDrawer({ children }) {
         <div className={classes.root}>
             <CssBaseline />
             <AppBar position="fixed" className={classes.appBar}>
-                <Toolbar>
-                    <Avatar className={classes.avatar}>{`${loggedUser?.firstName.toUpperCase()}${loggedUser?.lastName.toUpperCase()}`}</Avatar>
+                {loggedUser.firstName && <Toolbar>
+                    <Avatar className={classes.avatar}>{`${loggedUser.firstName.toUpperCase()}${loggedUser.lastName.toUpperCase()}`}</Avatar>
                     <Typography variant="h6" noWrap>
                         {`Welcome ${capitalizeFirstLetter(loggedUser.firstName)} ${capitalizeFirstLetter(loggedUser.lastName)}`}
                     </Typography>
                     <Badge className={classes.badge} badgeContent={newMessages?.length} color="secondary">
                         <MailIcon />
                     </Badge>
-                </Toolbar>
+                </Toolbar>}
             </AppBar>
             <Drawer
                 className={classes.drawer}
