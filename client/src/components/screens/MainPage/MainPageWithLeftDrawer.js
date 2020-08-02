@@ -76,12 +76,13 @@ export default function MainPageWithLeftDrawer({ children }) {
     // show new messages on the AppBar
 
     useEffect(() => {
-        if (currentLocation === '/inbox') {
+        if (currentLocation === routes.inbox) {
             const newmsgs = messageData?.data?.filter(msg => msg.isRead === false)
             setNewMessages(newmsgs)
         }
         return
     }, [messageData])
+    
 
     let history = useHistory();
 
