@@ -5,25 +5,19 @@ import { Switch, Route } from "react-router-dom";
 import { routes } from '../../constants';
 import RegisterPage from '../screens/RegisterPage';
 import LoginPage from '../screens/LoginPage';
-import { useRecoilValue } from 'recoil';
-import { loggedInState, useSetLoggedInState } from '../../store/loggedIn';
+import {  useSetLoggedInState } from '../../store/loggedIn';
 import InboxPage from '../screens/InboxPage'
 import SentPage from '../screens/SentPage'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory,  } from 'react-router-dom'
 import callAPI from '../../util/apiCall'
 
 
 function App() {
 
   const history = useHistory()
-  const location = useLocation()
-  const loggedIn = useRecoilValue(loggedInState)
   const SetLoggedInState = useSetLoggedInState()
 
-  // if (!loggedIn && location.pathname !== routes.login && location.pathname !== routes.register) {
-  //   history.push(routes.login)
-  //   return ""
-  // }
+
 
   useEffect(() => {
     (async function () {
