@@ -4,9 +4,11 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
-import { getMessageById, markMessageAsRead, getReceivedMessages } from '../../../actions/actions'
+import { getMessageById, markMessageAsRead, getReceivedMessages, getSentMessages } from '../../../actions/actions'
 import MessageDrawer from '../MessageDrawer'
 import { useSetMessageData } from '../../../store/messageData'
+import { routes } from '../../../constants';
+import { useLocation } from 'react-router-dom'
 
 
 
@@ -39,6 +41,8 @@ export default function MessagesListItem({ email, title, content, isRead, id, cr
 
   const [message, setMessage] = useState()
   const [openDrawer, setOpenDrawer] = useState(false)
+  
+  const currentLocation = useLocation().pathname
 
   const setRecoilMessagesData = useSetMessageData()
 
@@ -48,8 +52,14 @@ export default function MessagesListItem({ email, title, content, isRead, id, cr
       setMessage(messageData)
       setOpenDrawer(true)
       markMessageAsRead(id)
-      const newMsgData = await getReceivedMessages()
-      setRecoilMessagesData(newMsgData)
+      if (currentLocation === routes.inbox) {
+        const newMsgData = await getReceivedMessages()
+        setRecoilMessagesData(newMsgData)
+      } else if (currentLocation === routes.sent) {
+        const newMsgData = await getSentMessages()
+        setRecoilMessagesData(newMsgData)
+      }
+
     } catch {
       setMessage({ error: 'Ops, Server Error Try Again Later' })
     }
