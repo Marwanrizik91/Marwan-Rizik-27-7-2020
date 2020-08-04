@@ -14,6 +14,8 @@ export default function SentPage() {
            const messagesData = await getSentMessages()
            setMessagesData(messagesData)
         })()
+
+        return () => setMessagesData([])
     }, [])
 
     return (
