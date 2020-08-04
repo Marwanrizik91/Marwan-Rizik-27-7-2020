@@ -14,6 +14,7 @@ export default function InboxPage() {
            const messagesData = await getReceivedMessages()
            setMessagesData(messagesData)
         })()
+        return () => setMessagesData([])
     }, [])
 
     return (
