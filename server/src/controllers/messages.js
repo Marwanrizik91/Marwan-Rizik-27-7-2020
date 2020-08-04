@@ -45,14 +45,14 @@ exports.addMessage = async (req, res) => {
 
     // get the receiver in order to add his id to the message
     try {
-        const receiver = await users.getUserByEmail(req.body.email)
+        const receiver = await users.getUserByEmail(req.body.email.toLowerCase())
         if (!receiver) throw new Error('user not found')
 
         const sender = await users.getUserById(res.locals.user)
 
         const message = {
             //gets the sender id from the locals(added when authed)
-            senderEmail: sender.email,
+            senderEmail: sender.email.toLowerCase(),
             senderId: res.locals.user,
             receiverId: receiver.id.toString(),
             title: req.body.title,

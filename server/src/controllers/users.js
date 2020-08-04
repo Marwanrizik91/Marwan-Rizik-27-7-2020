@@ -10,7 +10,7 @@ exports.addUser = async (req, res) => {
     // add to database
     try {
         newUser.password = await bcrypt.hash(req.body.password, 10)
-        const addedUser = await users.add(newUser)
+        const addedUser = await users.add({...newUser, email: email.toLowerCase()})
         res.status(200).json({ message: 'user added successfully', code: 200, data: addedUser })
     } catch ({ message }) {
         console.error(message)
@@ -40,7 +40,7 @@ exports.edit = async (req, res) => {
 exports.login = async (req, res) => {
 
     const password = req.body.password;
-    const email = req.body.email;
+    const email = req.body.email.toLowerCase();
 
 
     // check if there is a user with this credentials
